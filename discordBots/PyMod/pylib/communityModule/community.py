@@ -26,16 +26,18 @@ class CommunityModule(Cog, name='Community Module'):
 #   Bot Info
     @command(name="botinfo")
     async def BotInfo(self, ctx, args=None):
+
+        botName = 'PyMod'
         svr = len(self.bot.guilds)
         botMaster = self.bot.get_user(340540581174575107)
-        botName = 'pyButt'
+
         if args == None:
 
             self.embed.title = f':notebook: About {botName}'
             self.embed.url=f'https://github.com/krigjo25/Discord/blob/main/{botName}/read-me.md'
             self.embed.description = ''
             self.embed.add_field(name = ':rotating_light: Released', value=getenv('BotCreated'), inline=True)
-            self.embed.add_field(name = ' :new: Updated', value=getenv('BotUpdated'), inline=True)
+            self.embed.add_field(name = ':new: Updated', value=getenv('BotUpdated'), inline=True)
             self.embed.add_field(name = ':person_with_probing_cane: Current Version', value= getenv('BotVersion'), inline=True)
             self.embed.add_field(name = ':toolbox: Responsory', value=getenv('Responsory'), inline=True)
             self.embed.add_field(name = ':cloud: Hosted', value=getenv('HOSTED'), inline=True)
@@ -46,12 +48,14 @@ class CommunityModule(Cog, name='Community Module'):
             self.embed.clear_fields()
 
         if args == 'log':
+            print('test')
 
-            self.embed.title = 'Whats new?'
-            self.embed.url=f'https://github.com/krigjo25/Discord/blob/main/{botName}/RSSBot.md'
-            changelog = f'*** What is new ***\n{CommunityFunctions.ReadChangelog()}'
+            self.embed.title = 'Change log'
+            self.embed.url=f'https://github.com/krigjo25/Discord/blob/main/{botName}/changelog.md'
+            self.embed.description = f'*** What is new ***\n{CommunityFunctions.ReadChangelog()}'
+            
 
-            await ctx.send(changelog)
+            await ctx.send(embed= self.embed)
             self.embed.clear_fields()
 
 
@@ -234,15 +238,13 @@ class CommunityModule(Cog, name='Community Module'):
 
         return
 
-class CommunityFunctions(Cog):
+class CommunityFunctions():
 
-    def __init__(self, bot) -> None:
-        super().__init__()
-        self.bot = bot
 
-    def ReadChangelog(self):
+    def ReadChangelog():
 
-        with open('Pybut/changelog.md', 'r') as f:
+        #   Opens the changelog
+        with open('PyMod/changelog.md', 'r') as f:
 
             changelog = f.read()
 

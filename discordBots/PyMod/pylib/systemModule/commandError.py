@@ -84,20 +84,21 @@ class ErrorHandler(Cog):
             """
 
             #   Initializing variables
-            cmd = str(ctx.Command)
+            cmd = str(ctx.command).lower()
             errorModule = str(misingargs)
 
             #   Community Module
 
-            if cmd == 'Randint' or cmd == 'randint':
-                self.embed.title = '*randint (integer one) (integer two)'
+            if cmd == 'randint' or cmd == 'dnd': self.embed.title = f'{cmdError.CommandNameError(cmd)}'
 
-            #   Minigames Module
-            elif cmd == 'Int' or cmd == 'int':
-                self.embed.title = '*int (easiest / easy / normal / hard / kimpossible)'
+            
+            #   Moderator module
+            elif cmd == 'warn' or cmd == 'chdel' or cmd == 'chcre': self.embed.title = f'{cmdError.CommandNameError(cmd)}'
+            elif cmd == 'sush' or cmd == 'online' or cmd == 'kick' or cmd == 'cls': self.embed.title = f'{cmdError.CommandNameError(cmd)}'
+            elif cmd == 'remove' or cmd == 'delRole' or cmd == 'RoleCreate' or cmd == 'setRole': self.embed.title = f'{cmdError.CommandNameError(cmd)}'
 
-            elif cmd == 'Afk' or cmd == 'afk':
-                self.embed.title = '*afk (Status update)'
+            # Administrator module
+            elif cmd == 'unban' or cmd == 'ban' or cmd == 'announce': self.embed.title = f'{cmdError.CommandNameError(cmd)}'
 
             else:
                 self.embed.title = 'Command Missing some required arguments'
@@ -109,9 +110,9 @@ class ErrorHandler(Cog):
         elif isinstance(error, cmdNotFound):
 
             #   Prepare and send the embed
-            print(ctx.command)
+
             errorModule = str(cmdNotFound)
-            self.embed.title = 'Command were not Found in the dictionary'
+            self.embed.title = f'404: Command were not found in the dictionary'
             self.embed.description = f'{cmdError.ErrorDescriptionDictionary(errorModule[36:51])}'
             await ctx.send(embed=self.embed)
 
@@ -258,3 +259,41 @@ class ErrorMessageDictionary():
         x = randrange(1, x)
 
         return dictionary.get(x)
+
+    def CommandNameError(cmd):
+
+        cmdPrefix = '?'
+
+        dictionary = {
+                        #   Community Module
+                        'dnd':f'{cmdPrefix}{cmd} (message)',
+                        'randint':f'{cmdPrefix}{cmd} (integer one) (integer two)',
+
+                        #   Moderator module
+                        'cls':f'{cmdPrefix}{cmd} (lines)',
+                        'online':f'{cmdPrefix}{cmd} optional (on/off)',
+                        'kick':f'{cmdPrefix}{cmd} (MemberName) (reason)',
+                        'warn':f'{cmdPrefix}{cmd} (MemberName) (reason)',
+                        'sush':f'{cmdPrefix}{cmd} (MemberName) (sec) (reason)',
+
+
+                        #   Role Management
+                        'remove':f'{cmdPrefix}{cmd} (Name)',
+                        'setRole':f'{cmdPrefix}{cmd} (Name)',
+#                       'roleCreate':f'{cmdPrefix}{cmd} (name)',
+#                       'rolePrivileges':f'{cmdPrefix}{cmd} ()',
+#                       'roleColor':f'{cmdPrefix}{cmd} (Name) (color)',
+
+                        #   Channael Management
+                        'chdel':f'{cmdPrefix}{cmd} (Channel Name)',
+                        'chcre':f'{cmdPrefix}{cmd} (Channel Name)',
+                        'setRole':f'{cmdPrefix}{cmd} (Name)',
+
+                        #   Administrator module
+                        'unban':f'{cmdPrefix}{cmd} (MemberName)',
+                        'announce':f'{cmdPrefix}{cmd} (channelName)',
+                        'ban':f'{cmdPrefix}{cmd} (MemberName) (reason)',
+
+
+}
+        return dictionary.get(cmd)

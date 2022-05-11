@@ -13,7 +13,10 @@ from discord.ext.commands import Cog, command, has_any_role
 
 class Moderator(Cog, name='Moderator-module'):
 
+    #   Declare variables
+
     def __init__(self, bot):
+
         self.bot = bot
         self.warn = 0    
         self.now = datetime.datetime.now()
@@ -22,8 +25,10 @@ class Moderator(Cog, name='Moderator-module'):
 
         return
 
-        #Creating a channel
-    @command(name="crech")
+    #   Manage Channels
+
+        #   Creating a channel
+    @command(name="chcre")
     @has_permissions(manage_messages=True)
     async def CreateChannel(self, ctx, chName):
 
@@ -63,6 +68,18 @@ class Moderator(Cog, name='Moderator-module'):
         await mlog.send(embed=self.embed)
         self.embed = Embed(color=Colour.dark_purple())
 
+        #   Delete a channel
+    @command(name="chdel")
+    @has_permissions(manage_messages=True)
+    async def CreateChannel(self, ctx, chName):
+        pass
+
+        #   Channel Privileges
+    @command(name="chPri")
+    @has_permissions(manage_messages=True)
+    async def CreateChannel(self, ctx, chName):
+        pass
+
         # Clearing all messages
     @command(name="cls")
     @has_permissions(manage_messages=True)
@@ -81,6 +98,7 @@ class Moderator(Cog, name='Moderator-module'):
 
                 await ctx.send('Sir, the limit is 10000 lines')
 
+    #   Kick Members
     #   Kick a user from the server
     @command(name='kick')
     @has_permissions(kick_members= True)
@@ -123,6 +141,60 @@ class Moderator(Cog, name='Moderator-module'):
             await member.send(message)
             await member.kick(reason=reason)
 
+    #   Warn
+    @command(name="warn")
+    @has_permissions(manage_messages=True)
+    async def UserWarn(self, ctx, member:Member, *, reason=None):
+
+        srv = ctx.guild
+
+        ch= get(srv.channels, name='moderationlog')
+        self.embed = Embed(color=Colour.dark_red(), description= '')
+
+        #   Counting warnings
+        #   How to make sure only the user retrieve the warning?
+
+        if reason == None:
+
+            self.embed.title  = 'Warning not sent'
+            self.embed.description = ' please provide a reason for the warn'
+
+        elif member == ctx.author:
+
+            self.embed.title = 'An error occoured'
+            self.embed.description = 'Can not warn your self'
+
+        else:
+
+            #   Creating a channel to log the warning 
+            if not ch:
+
+                #   Channel Permissions
+                perm = PermissionOverwrite()
+                perm.send_messages = False
+                perm.read_messages = False
+                perm.read_message_history = True
+
+                #   Creating the channel
+                await srv.create_text_channel(f'{ch.name}', overwrite=perm)
+                self.embed.title = 'Auto generated channel'
+                self.embed.description = 'This channel is used for every Moderation in this server, it is made to avoid abusage of the Moderation / administration commands'
+                self.embed.add_field(name= f'**{member}** has been warned by **{ctx.author}** for **{reason}**', value='.')
+                await ch.send(embed=self.embed)
+
+            message = f'Greetings **{member}**.\n You recieve this Notification, because you have been warned by **{ctx.author}**,  \n\n Due to :\n **{reason}**\n\nPlease read and follow the suggested guidelines for behavior in our disocrd channel'
+            await member.send(message)
+
+            self.embed.title = f'**{member}** has been warned by **{ctx.author}** for **{reason}.** Date : **{self.curTime}**'
+            self.embed.description = ''
+
+        await ch.send(embed=self.embed)
+        self.embed.clear_fields()
+        self.embed.color = Colour.dark_purple()
+
+        return
+
+    #   Default Moderator comamnds
     @command(name='poll', pass_context= True)
     @has_permissions(manage_messages=True)
 
@@ -370,7 +442,7 @@ class Moderator(Cog, name='Moderator-module'):
         if args != None:
             args = str(args).lower()
 
-            if args == 'online':
+            if args == 'on':
 
                 #   Fetching members
                 for member in srv.members:
@@ -396,7 +468,7 @@ class Moderator(Cog, name='Moderator-module'):
                 await ctx.send(embed = self.embed)
                 self.embed.clear_fields()
 
-            elif args == 'offline':
+            elif args == 'off':
 
                 #   Fetching members
                 for member in srv.members:
@@ -417,58 +489,7 @@ class Moderator(Cog, name='Moderator-module'):
                 await ctx.send(embed = self.embed)
                 self.embed.clear_fields()
 
-    #   Warn
-    @command(name="warn")
-    @has_permissions(manage_messages=True)
-    async def UserWarn(self, ctx, member:Member, *, reason=None):
-
-        srv = ctx.guild
-
-        ch= get(srv.channels, name='moderationlog')
-        self.embed = Embed(color=Colour.dark_red(), description= '')
-
-        #   Counting warnings
-        #   How to make sure only the user retrieve the warning?
-
-        if reason == None:
-
-            self.embed.title  = 'Warning not sent'
-            self.embed.description = ' please provide a reason for the warn'
-
-        elif member == ctx.author:
-
-            self.embed.title = 'An error occoured'
-            self.embed.description = 'Can not warn your self'
-
-        else:
-
-            #   Creating a channel to log the warning 
-            if not ch:
-
-                #   Channel Permissions
-                perm = PermissionOverwrite()
-                perm.send_messages = False
-                perm.read_messages = False
-                perm.read_message_history = True
-
-                #   Creating the channel
-                await srv.create_text_channel(f'{ch.name}', overwrite=perm)
-                self.embed.title = 'Auto generated channel'
-                self.embed.description = 'This channel is used for every Moderation in this server, it is made to avoid abusage of the Moderation / administration commands'
-                self.embed.add_field(name= f'**{member}** has been warned by **{ctx.author}** for **{reason}**', value='.')
-                await ch.send(embed=self.embed)
-
-            message = f'Greetings **{member}**.\n You recieve this Notification, because you have been warned by **{ctx.author}**,  \n\n Due to :\n **{reason}**\n\nPlease read and follow the suggested guidelines for behavior in our disocrd channel'
-            await member.send(message)
-
-            self.embed.title = f'**{member}** has been warned by **{ctx.author}** for **{reason}.** Date : **{self.curTime}**'
-            self.embed.description = ''
-
-        await ch.send(embed=self.embed)
-        self.embed.clear_fields()
-        self.embed.color = Colour.dark_purple()
-
-        return
+    #   Mute Members
 
     @command(name="sush")
     @has_permissions(mute_members = True)
