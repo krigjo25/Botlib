@@ -48,7 +48,6 @@ class CommunityModule(Cog, name='Community Module'):
             self.embed.clear_fields()
 
         if args == 'log':
-            print('test')
 
             self.embed.title = 'Change log'
             self.embed.url=f'https://github.com/krigjo25/Discord/blob/main/{botName}/changelog.md'
